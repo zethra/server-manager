@@ -5,6 +5,7 @@ import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,9 +34,11 @@ public class SSH {
     public String[] statuses = null;
 
     List<TextView> stats = new ArrayList<>();
+    List<Switch> switches = new ArrayList<>();
 
-    public SSH(List<TextView> _stats, Resources _resources) {
+    public SSH(List<TextView> _stats, List<Switch> _switches, Resources _resources) {
         stats = _stats;
+        switches = _switches;
         resources = _resources;
     }
 
@@ -109,17 +112,25 @@ public class SSH {
 
         @Override
         protected void onPostExecute(String result) {
-            statuses = result.split("\n");
-            if (statuses.length == stats.size()) {
-                for(int i = 0; i < statuses.length; i++) {
-                    if (!statuses[i].contains("not")) {
-                        stats.get(i).setText("Running");
-                        stats.get(i).setTextColor(resources.getColor(R.color.running));
-                    } else {
-                        stats.get(i).setText("Not Running");
-                        stats.get(i).setTextColor(resources.getColor(R.color.notRunning));
+            if(result != null) {
+                statuses = result.split("\n");
+                if (statuses.length == stats.size() && statuses.length == switches.size()) {
+                    for (int i = 0; i < statuses.length; i++) {
+                        if (!statuses[i].contains("not")) {
+                            stats.get(i).setText("Running");
+                            stats.get(i).setTextColor(resources.getColor(R.color.running));
+                            switches.get(i).setChecked(true);
+                        } else {
+                            stats.get(i).setText("Not Running");
+                            stats.get(i).setTextColor(resources.getColor(R.color.notRunning));
+                            switches.get(i).setChecked(false);
+                        }
                     }
+                } else {
+                    showToast(context, "Refresh Failed!");
                 }
+            } else {
+                showToast(context, "Refresh Failed!");
             }
             super.onPostExecute(result);
         }

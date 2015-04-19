@@ -3,11 +3,17 @@
 
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_settings">Settings</string>
 
     <string name="refresh">Refresh</string>
     <string name="noStatus">No Status</string>
+
+    <string name="apache">Apache</string>
+    <string name="tomcat">Tomcat</string>
+
     <string name="apacheStart">Start Apache</string>
     <string name="apacheStop">Stop Apache</string>
     <string name="tomcatStart">Start Tomcat</string>
     <string name="tomcatStop">Stop Tomcat</string>
+
 </resources>

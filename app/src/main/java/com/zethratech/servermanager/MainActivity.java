@@ -1,10 +1,12 @@
 package com.zethratech.servermanager;
 
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -19,6 +21,8 @@ public class MainActivity extends ActionBarActivity {
 
     TextView apacheStatus;
     TextView tomcatStatus;
+    Switch apacheSwitch;
+    Switch tomcatSwitch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,8 +30,10 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         apacheStatus = (TextView) findViewById(R.id.apacheStatus);
         tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
+        apacheSwitch = (Switch) findViewById(R.id.apacheSwitch);
+        tomcatSwitch = (Switch) findViewById(R.id.tomcatSwitch);
 
-        ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)), getResources());
+        ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)),new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch)) , getResources());
         ssh.refresh(getApplicationContext());
 
         timer = new Timer();
@@ -67,17 +73,29 @@ public class MainActivity extends ActionBarActivity {
             case R.id.refresh:
                 ssh.refresh(getApplicationContext());
                 break;
-            case R.id.apacheStart:
+/*            case R.id.apacheStart:
                 ssh.execute(getApplicationContext(), "service apache2 start");
                 break;
             case R.id.apacheStop:
                 ssh.execute(getApplicationContext(), "service apache2 stop");
+                break;*/
+            case R.id.apacheSwitch:
+                if(apacheSwitch.isChecked())
+                    ssh.execute(getApplicationContext(), "service apache2 start");
+                else
+                    ssh.execute(getApplicationContext(), "service apache2 stop");
                 break;
-            case R.id.tomcatStart:
+/*            case R.id.tomcatStart:
                 ssh.execute(getApplicationContext(), "service tomcat7 start");
                 break;
             case R.id.tomcatStop:
                 ssh.execute(getApplicationContext(), "service tomcat7 stop");
+                break;*/
+            case R.id.tomcatSwitch:
+                if(tomcatSwitch.isChecked())
+                    ssh.execute(getApplicationContext(), "service tomcat7 start");
+                else
+                    ssh.execute(getApplicationContext(), "service tomcat7 stop");
                 break;
         }
     }
@@ -87,6 +105,9 @@ public class MainActivity extends ActionBarActivity {
             case R.id.refresh:
                 ssh.refresh(getApplicationContext());
                 break;
+            case R.id.action_settings:
+                Intent setttingInent = new Intent(this, SettingsActivity.class);
+                startActivity(setttingInent);
         }
     }
 
