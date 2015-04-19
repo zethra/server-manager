@@ -1,6 +1,7 @@
 package com.zethratech.servermanager;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
@@ -20,19 +21,22 @@ import java.util.concurrent.ExecutionException;
 public class SSH {
     private static final String TAG = SSH.class.getSimpleName();
 
-    private String refreshCommand = "service apache2 status";
+    private String refreshCommand = "service apache2 status;service tomcat7 status";
 
     public String username = "root";
     public String password = "Ra1nbowCake!";
     public String hostname = "162.243.4.46";
     public int port = 22;
 
+    private Resources resources;
+
     public String[] statuses = null;
 
     List<TextView> stats = new ArrayList<>();
 
-    public SSH(TextView _stats) {
-        stats.add(_stats);
+    public SSH(List<TextView> _stats, Resources _resources) {
+        stats = _stats;
+        resources = _resources;
     }
 
     public boolean refreshIsFinished() {
@@ -106,15 +110,20 @@ public class SSH {
         @Override
         protected void onPostExecute(String result) {
             statuses = result.split("\n");
-            if (!statuses[0].contains("not")) {
-                stats.get(0).setText("Running");
-            } else {
-                stats.get(0).setText("Not Running");
+            if (statuses.length == stats.size()) {
+                for(int i = 0; i < statuses.length; i++) {
+                    if (!statuses[i].contains("not")) {
+                        stats.get(i).setText("Running");
+                        stats.get(i).setTextColor(resources.getColor(R.color.running));
+                    } else {
+                        stats.get(i).setText("Not Running");
+                        stats.get(i).setTextColor(resources.getColor(R.color.notRunning));
+                    }
+                }
             }
             super.onPostExecute(result);
         }
     }
-
 
     public static String executeRemoteCommand(String username, String password, String hostname, int port, String command) throws Exception {
         JSch jsch = new JSch();

@@ -8,5 +8,6 @@
     <string name="noStatus">No Status</string>
     <string name="apacheStart">Start Apache</string>
     <string name="apacheStop">Stop Apache</string>
-    
+    <string name="tomcatStart">Start Tomcat</string>
+    <string name="tomcatStop">Stop Tomcat</string>
 </resources>

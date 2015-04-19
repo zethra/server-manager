@@ -40,6 +40,29 @@
                 android:layout_height="wrap_content"
                 android:text="@string/noStatus"/>
         </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <Button android:id="@+id/tomcatStart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tomcatStart"
+                android:layout_marginRight="5dp"
+                android:onClick="onClick"/>
+
+            <Button android:id="@+id/tomcatStop"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/tomcatStop"
+                android:layout_marginRight="5dp"
+                android:onClick="onClick"/>
+
+            <TextView android:id="@+id/tomcatStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/noStatus"/>
+        </TableRow>
     </TableLayout>
 
 </RelativeLayout>

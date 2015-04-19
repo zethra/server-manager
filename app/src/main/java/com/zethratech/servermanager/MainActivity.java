@@ -8,19 +8,26 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class MainActivity extends ActionBarActivity {
 
     SSH ssh = null;
 
     TextView apacheStatus;
+    TextView tomcatStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         apacheStatus = (TextView) findViewById(R.id.apacheStatus);
+        tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
 
-        ssh = new SSH(apacheStatus);
+        ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)), getResources());
+
     }
 
 
@@ -56,6 +63,12 @@ public class MainActivity extends ActionBarActivity {
                 break;
             case R.id.apacheStop:
                 ssh.execute(getApplicationContext(), "service apache2 stop");
+                break;
+            case R.id.tomcatStart:
+                ssh.execute(getApplicationContext(), "service tomcat7 start");
+                break;
+            case R.id.tomcatStop:
+                ssh.execute(getApplicationContext(), "service tomcat7 stop");
                 break;
         }
 
