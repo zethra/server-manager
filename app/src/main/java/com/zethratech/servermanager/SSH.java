@@ -58,7 +58,7 @@ public class SSH {
         protected String doInBackground(String... params) {
             String output = null;
             try {
-                output = executeRemoteCommand("root", "Ra1nbowCake!", "162.243.4.46", 22, params[0]);
+                output = executeRemoteCommand(username, password, hostname, port, params[0]);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -67,6 +67,8 @@ public class SSH {
 
         @Override
         protected void onPostExecute(String result) {
+            showToast(context, result);
+            refresh(context);
             super.onPostExecute(result);
         }
 
@@ -94,7 +96,7 @@ public class SSH {
         protected String doInBackground(String... params) {
             String output = null;
             try {
-                output = executeRemoteCommand("root", "Ra1nbowCake!", "162.243.4.46", 22, params[0]);
+                output = executeRemoteCommand(username, password, hostname, port, params[0]);
             } catch (Exception e) {
                 e.printStackTrace();
             }

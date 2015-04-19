@@ -50,17 +50,14 @@ public class MainActivity extends ActionBarActivity {
         switch (view.getId()) {
             case R.id.refresh:
                 ssh.refresh(getApplicationContext());
-
+                break;
+            case R.id.apacheStart:
+                ssh.execute(getApplicationContext(), "service apache2 start");
+                break;
+            case R.id.apacheStop:
+                ssh.execute(getApplicationContext(), "service apache2 stop");
+                break;
         }
 
-    }
-
-    public void update() {
-        while (!ssh.refreshIsFinished()){}
-        if (!ssh.statuses[0].contains("not")) {
-            apacheStatus.setText("Running");
-        } else {
-            apacheStatus.setText("Not Running");
-        }
     }
 }
