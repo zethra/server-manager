@@ -2,16 +2,25 @@ package com.zethratech.servermanager;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-
+import android.view.View;
+import android.widget.TextView;
 
 public class MainActivity extends ActionBarActivity {
+
+    SSH ssh = null;
+
+    TextView apacheStatus;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        apacheStatus = (TextView) findViewById(R.id.apacheStatus);
+
+        ssh = new SSH(apacheStatus);
     }
 
 
@@ -35,5 +44,23 @@ public class MainActivity extends ActionBarActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.refresh:
+                ssh.refresh(getApplicationContext());
+
+        }
+
+    }
+
+    public void update() {
+        while (!ssh.refreshIsFinished()){}
+        if (!ssh.statuses[0].contains("not")) {
+            apacheStatus.setText("Running");
+        } else {
+            apacheStatus.setText("Not Running");
+        }
     }
 }
