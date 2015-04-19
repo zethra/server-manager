@@ -2,7 +2,6 @@ package com.zethratech.servermanager;
 
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,11 +9,13 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
 
     SSH ssh = null;
+    Timer timer;
 
     TextView apacheStatus;
     TextView tomcatStatus;
@@ -27,7 +28,15 @@ public class MainActivity extends ActionBarActivity {
         tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
 
         ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)), getResources());
+        ssh.refresh(getApplicationContext());
 
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ssh.refresh(getApplicationContext());
+            }
+        }, 0, 20000);
     }
 
 
@@ -71,6 +80,15 @@ public class MainActivity extends ActionBarActivity {
                 ssh.execute(getApplicationContext(), "service tomcat7 stop");
                 break;
         }
-
     }
+
+    public void onClick(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                ssh.refresh(getApplicationContext());
+                break;
+        }
+    }
+
+
 }
