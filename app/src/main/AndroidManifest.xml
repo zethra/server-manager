@@ -30,6 +30,10 @@
             android:name=".Pages"
             android:label="@string/title_activity_pages" >
         </activity>
+        <activity
+            android:name=".ActionsActivity"
+            android:label="@string/title_activity_actions" >
+        </activity>
     </application>
 
 </manifest>

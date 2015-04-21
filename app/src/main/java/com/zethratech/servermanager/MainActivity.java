@@ -93,9 +93,14 @@ public class MainActivity extends ActionBarActivity {
             case R.id.refresh:
                 ssh.refresh(getApplicationContext());
                 break;
+            case R.id.openPages:
+                Intent pagesIntent = new Intent(this, ActionsActivity.class);
+                startActivity(pagesIntent);
+                break;
             case R.id.action_settings:
-                Intent setttingInent = new Intent(this, SettingsActivity.class);
-                startActivity(setttingInent);
+                Intent setttingsInent = new Intent(this, SettingsActivity.class);
+                startActivity(setttingsInent);
+                break;
         }
     }
 
