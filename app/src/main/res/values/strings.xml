@@ -15,5 +15,19 @@
     <string name="apacheStop">Stop Apache</string>
     <string name="tomcatStart">Start Tomcat</string>
     <string name="tomcatStop">Stop Tomcat</string>
+    <string name="title_activity_main_activity2">MainActivity2Activity</string>
+    <string name="title_activity_main_activity22">MainActivity22Activity</string>
+
+
+    <string name="dummy_section_text">Section %1d is just a dummy section.</string>
+
+    <string name="demo_external_activity">Demo External Activity</string>
+    <string name="demo_collection">Demo Collection</string>
+
+    <string name="title_section1">Section 1</string>
+    <string name="title_section2">Section 2</string>
+    <string name="title_section3">Section 3</string>
+    <string name="title_activity_actions">actions</string>
+    <string name="title_activity_pages">Pages</string>
 
 </resources>

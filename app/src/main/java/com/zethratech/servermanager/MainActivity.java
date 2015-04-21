@@ -73,24 +73,12 @@ public class MainActivity extends ActionBarActivity {
             case R.id.refresh:
                 ssh.refresh(getApplicationContext());
                 break;
-/*            case R.id.apacheStart:
-                ssh.execute(getApplicationContext(), "service apache2 start");
-                break;
-            case R.id.apacheStop:
-                ssh.execute(getApplicationContext(), "service apache2 stop");
-                break;*/
             case R.id.apacheSwitch:
                 if(apacheSwitch.isChecked())
                     ssh.execute(getApplicationContext(), "service apache2 start");
                 else
                     ssh.execute(getApplicationContext(), "service apache2 stop");
                 break;
-/*            case R.id.tomcatStart:
-                ssh.execute(getApplicationContext(), "service tomcat7 start");
-                break;
-            case R.id.tomcatStop:
-                ssh.execute(getApplicationContext(), "service tomcat7 stop");
-                break;*/
             case R.id.tomcatSwitch:
                 if(tomcatSwitch.isChecked())
                     ssh.execute(getApplicationContext(), "service tomcat7 start");
