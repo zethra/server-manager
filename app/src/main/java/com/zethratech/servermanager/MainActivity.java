@@ -1,11 +1,15 @@
 package com.zethratech.servermanager;
 
 import android.content.Intent;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTabStrip;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -19,6 +23,9 @@ public class MainActivity extends ActionBarActivity {
     SSH ssh = null;
     Timer timer;
 
+    ViewPager viewPager;
+    PagerTabStrip pagerTabStrip;
+
     TextView apacheStatus;
     TextView tomcatStatus;
     Switch apacheSwitch;
@@ -28,10 +35,15 @@ public class MainActivity extends ActionBarActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        viewPager = (ViewPager) findViewById(R.id.viewPager);
+        pagerTabStrip = (PagerTabStrip) findViewById(R.id.title_strip);
         apacheStatus = (TextView) findViewById(R.id.apacheStatus);
         tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
         apacheSwitch = (Switch) findViewById(R.id.apacheSwitch);
         tomcatSwitch = (Switch) findViewById(R.id.tomcatSwitch);
+
+        pagerTabStrip = (PagerTabStrip) findViewById(R.id.title_strip);
+        viewPager.setAdapter(new MyPagerAdapter());
 
         ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)),new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch)) , getResources());
         ssh.refresh(getApplicationContext());
@@ -45,6 +57,25 @@ public class MainActivity extends ActionBarActivity {
         }, 0, 20000);
     }
 
+    @Override
+    public void onPause() {
+        timer.cancel();
+        timer = null;
+        super.onPause();
+    }
+
+    @Override
+    public void onResume() {
+        timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                ssh.refresh(getApplicationContext());
+            }
+        }, 0, 20000);
+        super.onResume();
+    }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -55,14 +86,14 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.refresh:
+                ssh.refresh(getApplicationContext());
+                break;
+            case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
+                break;
         }
 
         return super.onOptionsItemSelected(item);
@@ -88,21 +119,39 @@ public class MainActivity extends ActionBarActivity {
         }
     }
 
-    public void onClick(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.refresh:
-                ssh.refresh(getApplicationContext());
-                break;
-            case R.id.openPages:
-                Intent pagesIntent = new Intent(this, ActionsActivity.class);
-                startActivity(pagesIntent);
-                break;
-            case R.id.action_settings:
-                Intent setttingsInent = new Intent(this, SettingsActivity.class);
-                startActivity(setttingsInent);
-                break;
+    class MyPagerAdapter extends PagerAdapter {
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
+
+        @Override
+        public boolean isViewFromObject(View view, Object o) {
+            return o == view;
+        }
+
+        @Override
+        public CharSequence getPageTitle(int position) {
+            if (position == 0) {
+                return "Servers";
+            } else {
+                return "Settings";
+            }
+        }
+
+        @Override
+        public Object instantiateItem(ViewGroup container, int position) {
+            if(position == 0) {
+                View servers = getLayoutInflater().inflate(R.layout.fragment_servers, container, false);
+                container.addView(servers);
+                return servers;
+            } else {
+                View settings = getLayoutInflater().inflate(R.layout.activity_settings, container, false);
+                container.addView(settings);
+                return settings;
+            }
         }
     }
-
 
 }

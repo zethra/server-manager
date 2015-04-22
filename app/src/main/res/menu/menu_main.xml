@@ -5,16 +5,13 @@
     <item android:id="@+id/refresh"
         android:title="@string/refresh"
         android:orderInCategory="1"
-        app:showAsAction="ifRoom"
-        android:onClick="onClick" />
+        app:showAsAction="ifRoom"/>
     <item android:id="@+id/openPages"
         android:title="Pages"
         android:orderInCategory="2"
-        app:showAsAction="never"
-        android:onClick="onClick" />
+        app:showAsAction="never"/>
     <item android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        app:showAsAction="never"
-        android:onClick="onClick"/>
+        app:showAsAction="never"/>
 </menu>
