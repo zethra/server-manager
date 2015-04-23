@@ -6,6 +6,7 @@ import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,7 +25,6 @@ public class MainActivity extends ActionBarActivity {
     Timer timer;
 
     ViewPager viewPager;
-    PagerTabStrip pagerTabStrip;
 
     TextView apacheStatus;
     TextView tomcatStatus;
@@ -36,31 +36,14 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
-        pagerTabStrip = (PagerTabStrip) findViewById(R.id.title_strip);
-        apacheStatus = (TextView) findViewById(R.id.apacheStatus);
-        tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
-        apacheSwitch = (Switch) findViewById(R.id.apacheSwitch);
-        tomcatSwitch = (Switch) findViewById(R.id.tomcatSwitch);
-
-        pagerTabStrip = (PagerTabStrip) findViewById(R.id.title_strip);
         viewPager.setAdapter(new MyPagerAdapter());
-
-        ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)),new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch)) , getResources());
-        ssh.refresh(getApplicationContext());
-
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                ssh.refresh(getApplicationContext());
-            }
-        }, 0, 20000);
     }
 
     @Override
     public void onPause() {
         timer.cancel();
         timer = null;
+        Log.i(MainActivity.class.getSimpleName() ,"Pause");
         super.onPause();
     }
 
@@ -70,9 +53,10 @@ public class MainActivity extends ActionBarActivity {
         timer.schedule(new TimerTask() {
             @Override
             public void run() {
-                ssh.refresh(getApplicationContext());
+                //ssh.refresh(getApplicationContext());
             }
         }, 0, 20000);
+        Log.i(MainActivity.class.getSimpleName() ,"Resume");
         super.onResume();
     }
 
@@ -145,6 +129,21 @@ public class MainActivity extends ActionBarActivity {
             if(position == 0) {
                 View servers = getLayoutInflater().inflate(R.layout.fragment_servers, container, false);
                 container.addView(servers);
+                apacheStatus = (TextView) findViewById(R.id.apacheStatus);
+                tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
+                apacheSwitch = (Switch) findViewById(R.id.apacheSwitch);
+                tomcatSwitch = (Switch) findViewById(R.id.tomcatSwitch);
+
+                ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)),new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch)) , getResources());
+                ssh.refresh(getApplicationContext());
+
+                /*timer = new Timer();
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ssh.refresh(getApplicationContext());
+                    }
+                }, 0, 20000);*/
                 return servers;
             } else {
                 View settings = getLayoutInflater().inflate(R.layout.activity_settings, container, false);

@@ -29,5 +29,6 @@
     <string name="title_section3">Section 3</string>
     <string name="title_activity_actions">actions</string>
     <string name="title_activity_pages">Pages</string>
+    <string name="title_activity_server">ServerActivity</string>
 
 </resources>
