@@ -15,7 +15,9 @@ import com.jcraft.jsch.Session;
 
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutionException;
 
@@ -23,6 +25,9 @@ public class SSH {
     private static final String TAG = SSH.class.getSimpleName();
 
     private String refreshCommand = "service apache2 status;service tomcat7 status";
+
+    Map<String, Integer> commands;
+    Integer command = 0;
 
     public String username = "root";
     public String password = "Ra1nbowCake!";
@@ -40,17 +45,20 @@ public class SSH {
         stats = _stats;
         switches = _switches;
         resources = _resources;
-    }
-
-    public boolean refreshIsFinished() {
-        if (statuses != null)
-            return true;
-        else
-            return false;
+        commands = new HashMap<>();
+        commands.put("execute", 1);
+        commands.put("refresh", 2);
+        commands.put("getUpdates", 3);
     }
 
     public void execute(Context context, String command) {
+        this.command = commands.get("execute");
         new ExecuteTask(context).execute(command);
+    }
+
+    public void refresh(Context context) {
+        command = commands.get("refresh");
+        new ExecuteTask(context).execute(refreshCommand);
     }
 
     private class ExecuteTask extends AsyncTask<String, String, String> {
@@ -74,15 +82,37 @@ public class SSH {
 
         @Override
         protected void onPostExecute(String result) {
-            showToast(context, result);
-            refresh(context);
+            if(command == commands.get("execute")) {
+                showToast(context, result);
+                refresh(context);
+            } else if(command == commands.get("refresh")) {
+                if(result != null) {
+                    statuses = result.split("\n");
+                    if (statuses.length == stats.size() && statuses.length == switches.size()) {
+                        for (int i = 0; i < statuses.length; i++) {
+                            if (!statuses[i].contains("not")) {
+                                stats.get(i).setText("Running");
+                                stats.get(i).setTextColor(resources.getColor(R.color.running));
+                                switches.get(i).setChecked(true);
+                            } else {
+                                stats.get(i).setText("Not Running");
+                                stats.get(i).setTextColor(resources.getColor(R.color.notRunning));
+                                switches.get(i).setChecked(false);
+                            }
+                        }
+                    } else {
+                        showToast(context, "Refresh Failed!");
+                    }
+                } else {
+                    showToast(context, "Refresh Failed!");
+                }
+                Log.i(TAG, "Refreshed");
+            } else if(command == commands.get("getUpdate")) {
+
+            }
             super.onPostExecute(result);
         }
 
-    }
-
-    public void refresh(Context context) {
-        new RefreshTask(context).execute(refreshCommand);
     }
 
     private class RefreshTask extends AsyncTask<String, String, String> {
@@ -132,6 +162,7 @@ public class SSH {
             } else {
                 showToast(context, "Refresh Failed!");
             }
+            Log.i(TAG, "Refreshed");
             super.onPostExecute(result);
         }
     }

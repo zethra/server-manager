@@ -2,7 +2,6 @@ package com.zethratech.servermanager;
 
 import android.content.Intent;
 import android.support.v4.view.PagerAdapter;
-import android.support.v4.view.PagerTabStrip;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
@@ -20,6 +19,10 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
+
+    int refreshTime = 20000;
+
+    boolean refresh = false;
 
     SSH ssh = null;
     Timer timer;
@@ -41,21 +44,14 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onPause() {
-        timer.cancel();
-        timer = null;
+        refresh = false;
         Log.i(MainActivity.class.getSimpleName() ,"Pause");
         super.onPause();
     }
 
     @Override
     public void onResume() {
-        timer = new Timer();
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                //ssh.refresh(getApplicationContext());
-            }
-        }, 0, 20000);
+        refresh = false;
         Log.i(MainActivity.class.getSimpleName() ,"Resume");
         super.onResume();
     }
@@ -120,7 +116,7 @@ public class MainActivity extends ActionBarActivity {
             if (position == 0) {
                 return "Servers";
             } else {
-                return "Settings";
+                return "Updates";
             }
         }
 
@@ -137,19 +133,26 @@ public class MainActivity extends ActionBarActivity {
                 ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)),new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch)) , getResources());
                 ssh.refresh(getApplicationContext());
 
-                /*timer = new Timer();
+                refresh = true;
+                timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        ssh.refresh(getApplicationContext());
+                        if (refresh && ssh != null) {
+                            ssh.refresh(getApplicationContext());
+                        }
                     }
-                }, 0, 20000);*/
+                }, 0, refreshTime);
                 return servers;
             } else {
-                View settings = getLayoutInflater().inflate(R.layout.activity_settings, container, false);
+                View settings = getLayoutInflater().inflate(R.layout.fragment_updates, container, false);
                 container.addView(settings);
                 return settings;
             }
+        }
+
+        @Override
+        public void finishUpdate(ViewGroup container) {
         }
     }
 
