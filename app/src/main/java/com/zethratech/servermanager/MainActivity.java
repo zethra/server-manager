@@ -34,6 +34,8 @@ public class MainActivity extends ActionBarActivity {
     Switch apacheSwitch;
     Switch tomcatSwitch;
 
+    TextView updateOutput;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,6 +98,12 @@ public class MainActivity extends ActionBarActivity {
                 else
                     ssh.execute(getApplicationContext(), "service tomcat7 stop");
                 break;
+            case R.id.getUpdates:
+                ssh.getUpdates(getApplicationContext(), updateOutput);
+                break;
+            case R.id.update:
+                ssh.update(getApplicationContext());
+                break;
         }
     }
 
@@ -147,6 +155,7 @@ public class MainActivity extends ActionBarActivity {
             } else {
                 View settings = getLayoutInflater().inflate(R.layout.fragment_updates, container, false);
                 container.addView(settings);
+                updateOutput = (TextView) findViewById(R.id.updateOutput);
                 return settings;
             }
         }

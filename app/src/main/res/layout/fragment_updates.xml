@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
     <TableRow>
-        <Button
+        <Button android:id="@+id/update"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -22,7 +22,7 @@
     <TableRow
         android:layout_weight="1"
         android:layout_gravity="center">
-        <TextView
+        <TextView android:id="@+id/updateOutput"
             android:layout_width="match_parent"
             android:layout_height="fill_parent"
             android:layout_weight="1"
@@ -30,11 +30,12 @@
             android:text="@string/needsRefresh"/>
     </TableRow>
     <TableRow>
-        <Button
+        <Button android:id="@+id/getUpdates"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/getUpdateStatus"/>
+            android:text="@string/getUpdateStatus"
+            android:onClick="onClick"/>
     </TableRow>
     </TableLayout>
 </RelativeLayout>

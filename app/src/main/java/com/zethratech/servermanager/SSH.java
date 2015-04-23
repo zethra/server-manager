@@ -14,6 +14,7 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.Session;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.Wrapper;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -25,9 +26,10 @@ public class SSH {
     private static final String TAG = SSH.class.getSimpleName();
 
     private String refreshCommand = "service apache2 status;service tomcat7 status";
+    private String getUpdatesCommand = "/usr/lib/update-notifier/update-motd-updates-available && /usr/lib/update-notifier/update-motd-reboot-required";
+    private String updateCommand = "apt-get update && apt-get upgrade -y";
 
     Map<String, Integer> commands;
-    Integer command = 0;
 
     public String username = "root";
     public String password = "Ra1nbowCake!";
@@ -40,6 +42,7 @@ public class SSH {
 
     List<TextView> stats = new ArrayList<>();
     List<Switch> switches = new ArrayList<>();
+    TextView updateOutput;
 
     public SSH(List<TextView> _stats, List<Switch> _switches, Resources _resources) {
         stats = _stats;
@@ -49,19 +52,31 @@ public class SSH {
         commands.put("execute", 1);
         commands.put("refresh", 2);
         commands.put("getUpdates", 3);
+        commands.put("update", 4);
     }
 
     public void execute(Context context, String command) {
-        this.command = commands.get("execute");
-        new ExecuteTask(context).execute(command);
+        CommandWrapper commandWrapper = new CommandWrapper(commands.get("execute"), command);
+        new ExecuteTask(context).execute(commandWrapper);
     }
 
     public void refresh(Context context) {
-        command = commands.get("refresh");
-        new ExecuteTask(context).execute(refreshCommand);
+        CommandWrapper commandWrapper = new CommandWrapper(commands.get("refresh"), refreshCommand);
+        new ExecuteTask(context).execute(commandWrapper);
     }
 
-    private class ExecuteTask extends AsyncTask<String, String, String> {
+    public void getUpdates(Context context, TextView updateOutput) {
+        CommandWrapper commandWrapper = new CommandWrapper(commands.get("getUpdates"), getUpdatesCommand);
+        this.updateOutput = updateOutput;
+        new ExecuteTask(context).execute(commandWrapper);
+    }
+
+    public void update(Context context) {
+        CommandWrapper commandWrapper = new CommandWrapper(commands.get("update"), updateCommand);
+        new ExecuteTask(context).execute(commandWrapper);
+    }
+
+    private class ExecuteTask extends AsyncTask<CommandWrapper, String, CommandWrapper> {
 
         private Context context;
 
@@ -70,24 +85,23 @@ public class SSH {
         }
 
         @Override
-        protected String doInBackground(String... params) {
-            String output = null;
+        protected CommandWrapper doInBackground(CommandWrapper... params) {
             try {
-                output = executeRemoteCommand(username, password, hostname, port, params[0]);
+                params[0].setCommandOutput(executeRemoteCommand(username, password, hostname, port, params[0].getCommand()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            return output;
+            return params[0];
         }
 
         @Override
-        protected void onPostExecute(String result) {
-            if(command == commands.get("execute")) {
-                showToast(context, result);
+        protected void onPostExecute(CommandWrapper result) {
+            if(result.getCommandNumber() == commands.get("execute")) {
+                showToast(context, result.getCommandOutput());
                 refresh(context);
-            } else if(command == commands.get("refresh")) {
-                if(result != null) {
-                    statuses = result.split("\n");
+            } else if(result.getCommandNumber() == commands.get("refresh")) {
+                if(result != null && result.getCommandOutput() != null) {
+                    statuses = result.getCommandOutput().split("\n");
                     if (statuses.length == stats.size() && statuses.length == switches.size()) {
                         for (int i = 0; i < statuses.length; i++) {
                             if (!statuses[i].contains("not")) {
@@ -107,64 +121,24 @@ public class SSH {
                     showToast(context, "Refresh Failed!");
                 }
                 Log.i(TAG, "Refreshed");
-            } else if(command == commands.get("getUpdate")) {
-
-            }
-            super.onPostExecute(result);
-        }
-
-    }
-
-    private class RefreshTask extends AsyncTask<String, String, String> {
-
-        private Context context;
-
-        public RefreshTask(Context context) {
-            this.context = context;
-        }
-
-        @Override
-        protected void onPreExecute() {
-            statuses = null;
-            super.onPreExecute();
-        }
-
-        @Override
-        protected String doInBackground(String... params) {
-            String output = null;
-            try {
-                output = executeRemoteCommand(username, password, hostname, port, params[0]);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return output;
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            if(result != null) {
-                statuses = result.split("\n");
-                if (statuses.length == stats.size() && statuses.length == switches.size()) {
-                    for (int i = 0; i < statuses.length; i++) {
-                        if (!statuses[i].contains("not")) {
-                            stats.get(i).setText("Running");
-                            stats.get(i).setTextColor(resources.getColor(R.color.running));
-                            switches.get(i).setChecked(true);
-                        } else {
-                            stats.get(i).setText("Not Running");
-                            stats.get(i).setTextColor(resources.getColor(R.color.notRunning));
-                            switches.get(i).setChecked(false);
-                        }
+            } else if(result.getCommandNumber() == commands.get("getUpdates")) {
+                showToast(context, "Checked for Updates");
+                if(updateOutput != null) {
+                    if(result.getCommandOutput().equals("\n")) {
+                        updateOutput.setText("No Updates Available");
+                    } else {
+                        updateOutput.setText(result.getCommandOutput());
                     }
-                } else {
-                    showToast(context, "Refresh Failed!");
                 }
-            } else {
-                showToast(context, "Refresh Failed!");
+                else
+                    showToast(context, "ERROR: Could not show update output");
+            } else if(result.getCommandNumber() == commands.get("update")) {
+                showToast(context, "Installed Updates");
+                Log.i(TAG, result.getCommandOutput());
             }
-            Log.i(TAG, "Refreshed");
             super.onPostExecute(result);
         }
+
     }
 
     public static String executeRemoteCommand(String username, String password, String hostname, int port, String command) throws Exception {

@@ -16,6 +16,6 @@
     <string name="tomcatStop">Stop Tomcat</string>
 
     <string name="update">Install Updates</string>
-    <string name="needsRefresh">Press Check for Updates to get update status</string>
-    <string name="getUpdateStatus">Get Update Status</string>
+    <string name="needsRefresh">Press "Check for Updates" to get update status</string>
+    <string name="getUpdateStatus">Check for Updates</string>
 </resources>
