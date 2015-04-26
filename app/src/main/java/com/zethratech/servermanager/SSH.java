@@ -16,6 +16,7 @@ import com.jcraft.jsch.Session;
 import java.io.ByteArrayOutputStream;
 import java.sql.Wrapper;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +26,8 @@ import java.util.concurrent.ExecutionException;
 public class SSH {
     private static final String TAG = SSH.class.getSimpleName();
 
-    private String refreshCommand = "service apache2 status;service tomcat7 status";
+    private List<String> refreshCommands = new ArrayList<>(Arrays.asList("pidof apache2", "ps -u tomcat7 | grep java | awk ' { print $1 } '", "pidof vsftpd", "pgrep openvpn"));
+    //private String refreshCommand = "pidof apache2 && echo : && pgrep -f tomcat7";
     private String getUpdatesCommand = "/usr/lib/update-notifier/update-motd-updates-available && /usr/lib/update-notifier/update-motd-reboot-required";
     private String updateCommand = "apt-get update && apt-get upgrade -y";
 
@@ -61,6 +63,14 @@ public class SSH {
     }
 
     public void refresh(Context context) {
+        String refreshCommand = "";
+        for(int i = 0; i < refreshCommands.size(); i++) {
+            refreshCommand += refreshCommands.get(i);
+            if(i != refreshCommands.size() - 1) {
+                refreshCommand += " ; echo : ; ";
+            }
+        }
+        refreshCommand = refreshCommand + "; (" + refreshCommand + ") > out ; ps aux > pro";
         CommandWrapper commandWrapper = new CommandWrapper(commands.get("refresh"), refreshCommand);
         new ExecuteTask(context).execute(commandWrapper);
     }
@@ -101,10 +111,10 @@ public class SSH {
                 refresh(context);
             } else if(result.getCommandNumber() == commands.get("refresh")) {
                 if(result != null && result.getCommandOutput() != null) {
-                    statuses = result.getCommandOutput().split("\n");
+                    statuses = result.getCommandOutput().split(":");
                     if (statuses.length == stats.size() && statuses.length == switches.size()) {
                         for (int i = 0; i < statuses.length; i++) {
-                            if (!statuses[i].contains("not")) {
+                            if (statuses[i].replaceAll("\\s+","").matches(".*\\d+.*")) {
                                 stats.get(i).setText("Running");
                                 stats.get(i).setTextColor(resources.getColor(R.color.running));
                                 switches.get(i).setChecked(true);

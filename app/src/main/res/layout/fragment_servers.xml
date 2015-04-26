@@ -49,5 +49,43 @@
                 android:textSize="20dp"
                 android:text="@string/noStatus"/>
         </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <Switch android:id="@+id/vsftpdSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:textSize="20dp"
+                android:text="@string/vsftpd"
+                android:onClick="onClick"/>
+
+            <TextView android:id="@+id/vsftpdStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="@string/noStatus"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
+            <Switch android:id="@+id/openvpnSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:textSize="20dp"
+                android:text="@string/openvpn"
+                android:onClick="onClick"/>
+
+            <TextView android:id="@+id/openvpnStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="@string/noStatus"/>
+        </TableRow>
     </TableLayout>
 </RelativeLayout>

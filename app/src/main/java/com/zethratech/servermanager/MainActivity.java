@@ -31,8 +31,12 @@ public class MainActivity extends ActionBarActivity {
 
     TextView apacheStatus;
     TextView tomcatStatus;
+    TextView vsftpdStatus;
+    TextView openvpnStatus;
     Switch apacheSwitch;
     Switch tomcatSwitch;
+    Switch vsftpdSwitch;
+    Switch openvpnSwitch;
 
     TextView updateOutput;
 
@@ -98,6 +102,16 @@ public class MainActivity extends ActionBarActivity {
                 else
                     ssh.execute(getApplicationContext(), "service tomcat7 stop");
                 break;
+            case R.id.vsftpdSwitch:
+                if(vsftpdSwitch.isChecked())
+                    ssh.execute(getApplicationContext(), "service vsftpd start");
+                else
+                    ssh.execute(getApplicationContext(), "service vsftpd stop");
+            case R.id.openvpnSwitch:
+                if(openvpnSwitch.isChecked())
+                    ssh.execute(getApplicationContext(), "service openvpnas start");
+                else
+                    ssh.execute(getApplicationContext(), "service openvpnas stop");
             case R.id.getUpdates:
                 ssh.getUpdates(getApplicationContext(), updateOutput);
                 break;
@@ -135,11 +149,16 @@ public class MainActivity extends ActionBarActivity {
                 container.addView(servers);
                 apacheStatus = (TextView) findViewById(R.id.apacheStatus);
                 tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
+                vsftpdStatus = (TextView) findViewById(R.id.vsftpdStatus);
+                openvpnStatus = (TextView) findViewById(R.id.openvpnStatus);
                 apacheSwitch = (Switch) findViewById(R.id.apacheSwitch);
                 tomcatSwitch = (Switch) findViewById(R.id.tomcatSwitch);
+                vsftpdSwitch = (Switch) findViewById(R.id.vsftpdSwitch);
+                openvpnSwitch = (Switch) findViewById(R.id.openvpnSwitch);
 
-                ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus)),new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch)) , getResources());
-                ssh.refresh(getApplicationContext());
+                ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus, vsftpdStatus, openvpnStatus)),
+                        new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
+                //ssh.refresh(getApplicationContext());
 
                 refresh = true;
                 timer = new Timer();

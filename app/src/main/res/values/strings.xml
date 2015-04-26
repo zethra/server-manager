@@ -7,8 +7,10 @@
     <string name="refresh">Refresh</string>
     <string name="noStatus">No Status</string>
 
-    <string name="apache">Apache</string>
-    <string name="tomcat">Tomcat</string>
+    <string name="apache">Apache2</string>
+    <string name="tomcat">Tomcat7</string>
+    <string name="vsftpd">VSFTPD</string>
+    <string name="openvpn">OpenVPN</string>
 
     <string name="apacheStart">Start Apache</string>
     <string name="apacheStop">Stop Apache</string>
