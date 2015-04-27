@@ -8,15 +8,15 @@ import android.util.Log;
 /**
  * Created by bgoldberg on 4/27/2015.
  */
-public class Database  extends SQLiteOpenHelper {
+public class DatabaseHelper extends SQLiteOpenHelper {
 
     private static String DATABASE_NAME = "server-manager.db";
     private static final int DATABASE_VERSION = 1;
 
     private static String DATABASE_CREATE = "";
-    public  CreateFromModel settingModel = new CreateFromModel();
+    public CreateFromModel settingModel = new CreateFromModel();
 
-    public Database(Context context, String DATABASE_NAME) {
+    public DatabaseHelper(Context context, String DATABASE_NAME) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
         this.DATABASE_NAME = DATABASE_NAME;
         DATABASE_CREATE = settingModel.create("settingsTable", Settings.class, true);
@@ -29,7 +29,7 @@ public class Database  extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.w(Database.class.getName(),
+        Log.w(DatabaseHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
         db.execSQL("DROP TABLE IF EXISTS " + settingModel.tableName);
