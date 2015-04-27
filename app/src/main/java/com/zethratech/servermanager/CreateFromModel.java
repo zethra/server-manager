@@ -8,11 +8,10 @@ import java.util.List;
  * Created by bgoldberg on 4/27/2015.
  */
 public class CreateFromModel {
-    String tableName;
-    String createString;
+    public String createString;
+    public String COLUMN_ID;
     List<String> names = new ArrayList<>();
-    public String create(String tableName, Class toConvert, boolean notNull) {
-        this.tableName = tableName;
+    public CreateFromModel(String tableName, Class toConvert, boolean notNull) {
         createString = "create table " + tableName + "(";
         int i = 1;
         for(Field field : toConvert.getDeclaredFields()) {
@@ -25,6 +24,7 @@ public class CreateFromModel {
 
             if(field.getName().equals("id")) {
                 createString += " primary key autoincrement";
+                COLUMN_ID = field.getName();
             } else if(notNull) {
                 createString += " not null";
             }
@@ -37,7 +37,5 @@ public class CreateFromModel {
             names.add(field.getName());
             i++;
         }
-
-        return createString;
     }
 }

@@ -13,13 +13,17 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static String DATABASE_NAME = "server-manager.db";
     private static final int DATABASE_VERSION = 1;
 
-    private static String DATABASE_CREATE = "";
-    public CreateFromModel settingModel = new CreateFromModel();
+    public String TABLE_NAME = "";
+    private String DATABASE_CREATE;
+    public String COLUMN_ID;
+    public CreateFromModel fromModel;
 
-    public DatabaseHelper(Context context, String DATABASE_NAME) {
+    public DatabaseHelper(Context context, String TABLE_NAME, Class model) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        this.DATABASE_NAME = DATABASE_NAME;
-        DATABASE_CREATE = settingModel.create("settingsTable", Settings.class, true);
+        this.TABLE_NAME = TABLE_NAME;
+        fromModel = new CreateFromModel(TABLE_NAME, model, true);
+        DATABASE_CREATE = fromModel.createString;
+        COLUMN_ID = fromModel.COLUMN_ID;
     }
 
     @Override
@@ -32,7 +36,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         Log.w(DatabaseHelper.class.getName(),
                 "Upgrading database from version " + oldVersion + " to "
                         + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + settingModel.tableName);
+        db.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
         onCreate(db);
     }
 }
