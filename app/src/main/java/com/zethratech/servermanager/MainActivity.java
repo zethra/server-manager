@@ -170,7 +170,6 @@ public class MainActivity extends ActionBarActivity {
 
                 ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus,mysqlStatus, vsftpdStatus, openvpnStatus)),
                         new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, mysqlSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
-                //ssh.refresh(getApplicationContext());
 
                 refresh = true;
                 timer = new Timer();
@@ -182,6 +181,8 @@ public class MainActivity extends ActionBarActivity {
                         }
                     }
                 }, 0, refreshTime);
+
+                //CreateFromModel createFromModel = new CreateFromModel(Settings.class);
                 return servers;
             } else {
                 View settings = getLayoutInflater().inflate(R.layout.fragment_updates, container, false);
