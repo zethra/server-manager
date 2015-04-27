@@ -33,10 +33,13 @@ public class MainActivity extends ActionBarActivity {
     TextView tomcatStatus;
     TextView vsftpdStatus;
     TextView openvpnStatus;
+    TextView mysqlStatus;
+
     Switch apacheSwitch;
     Switch tomcatSwitch;
     Switch vsftpdSwitch;
     Switch openvpnSwitch;
+    Switch mysqlSwitch;
 
     TextView updateOutput;
 
@@ -102,6 +105,12 @@ public class MainActivity extends ActionBarActivity {
                 else
                     ssh.execute(getApplicationContext(), "service tomcat7 stop");
                 break;
+            case R.id.mysqlSwitch:
+                if(mysqlSwitch.isChecked())
+                    ssh.execute(getApplicationContext(), "service mysql start");
+                else
+                    ssh.execute(getApplicationContext(), "service mysql stop");
+                break;
             case R.id.vsftpdSwitch:
                 if(vsftpdSwitch.isChecked())
                     ssh.execute(getApplicationContext(), "service vsftpd start");
@@ -151,13 +160,16 @@ public class MainActivity extends ActionBarActivity {
                 tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
                 vsftpdStatus = (TextView) findViewById(R.id.vsftpdStatus);
                 openvpnStatus = (TextView) findViewById(R.id.openvpnStatus);
+                mysqlStatus = (TextView) findViewById(R.id.mysqlStatus);
+
                 apacheSwitch = (Switch) findViewById(R.id.apacheSwitch);
                 tomcatSwitch = (Switch) findViewById(R.id.tomcatSwitch);
                 vsftpdSwitch = (Switch) findViewById(R.id.vsftpdSwitch);
                 openvpnSwitch = (Switch) findViewById(R.id.openvpnSwitch);
+                mysqlSwitch = (Switch) findViewById(R.id.mysqlSwitch);
 
-                ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus, vsftpdStatus, openvpnStatus)),
-                        new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
+                ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus,mysqlStatus, vsftpdStatus, openvpnStatus)),
+                        new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, mysqlSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
                 //ssh.refresh(getApplicationContext());
 
                 refresh = true;

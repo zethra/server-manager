@@ -26,7 +26,7 @@ import java.util.concurrent.ExecutionException;
 public class SSH {
     private static final String TAG = SSH.class.getSimpleName();
 
-    private List<String> refreshCommands = new ArrayList<>(Arrays.asList("pidof apache2", "ps -u tomcat7 | grep java | awk ' { print $1 } '", "pidof vsftpd", "pgrep openvpn"));
+    private List<String> refreshCommands = new ArrayList<>(Arrays.asList("pidof apache2", "ps -u tomcat7 | grep java | awk ' { print $1 } '","pidof mysqld" , "pidof vsftpd", "pgrep openvpn"));
     //private String refreshCommand = "pidof apache2 && echo : && pgrep -f tomcat7";
     private String getUpdatesCommand = "/usr/lib/update-notifier/update-motd-updates-available && /usr/lib/update-notifier/update-motd-reboot-required";
     private String updateCommand = "apt-get update && apt-get upgrade -y";

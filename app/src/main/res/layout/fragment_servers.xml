@@ -54,6 +54,25 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="15dp">
 
+            <Switch android:id="@+id/mysqlSwitch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:textSize="20dp"
+                android:text="@string/mysql"
+                android:onClick="onClick"/>
+
+            <TextView android:id="@+id/mysqlStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="@string/noStatus"/>
+        </TableRow>
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp">
+
             <Switch android:id="@+id/vsftpdSwitch"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

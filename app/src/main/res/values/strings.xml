@@ -11,6 +11,7 @@
     <string name="tomcat">Tomcat7</string>
     <string name="vsftpd">VSFTPD</string>
     <string name="openvpn">OpenVPN</string>
+    <string name="mysql">MySQL</string>
 
     <string name="apacheStart">Start Apache</string>
     <string name="apacheStop">Stop Apache</string>
