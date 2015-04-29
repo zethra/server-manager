@@ -7,9 +7,6 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-/**
- * Created by Zethra on 4/27/2015.
- */
 public class SettingsDataSource {
     private Context context;
 
@@ -50,5 +47,6 @@ public class SettingsDataSource {
         Cursor cursor =  database.query(dbHelper.TABLE_NAME, allColumns, dbHelper.COLUMN_ID + " = " + insertId, null,
                 null, null, null);
         cursor.moveToFirst();
+        return new Settings();
     }
 }
