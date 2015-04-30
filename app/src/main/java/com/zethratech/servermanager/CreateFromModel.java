@@ -10,7 +10,7 @@ import java.util.List;
 public class CreateFromModel {
     public String createString;
     public String COLUMN_ID;
-    List<String> names = new ArrayList<>();
+    public List<String> names = new ArrayList<>();
     public CreateFromModel(String tableName, Class toConvert, boolean notNull) {
         createString = "create table " + tableName + "(";
         int i = 1;
