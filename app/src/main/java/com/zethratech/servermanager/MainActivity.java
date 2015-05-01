@@ -80,8 +80,6 @@ public class MainActivity extends ActionBarActivity {
                 ssh.refresh(getApplicationContext());
                 break;
             case R.id.action_settings:
-                Intent settingsIntent = new Intent(this, SettingsActivity.class);
-                startActivity(settingsIntent);
                 break;
         }
 
