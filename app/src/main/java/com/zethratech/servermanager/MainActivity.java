@@ -1,6 +1,8 @@
 package com.zethratech.servermanager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
@@ -23,6 +25,7 @@ public class MainActivity extends ActionBarActivity {
     int refreshTime = 20000;
 
     boolean refresh = false;
+    boolean autoRefrsh = false;
 
     SSH ssh = null;
     Timer timer;
@@ -43,12 +46,22 @@ public class MainActivity extends ActionBarActivity {
 
     TextView updateOutput;
 
+    SharedPreferences settings;
+    SharedPreferences.OnSharedPreferenceChangeListener settingChange;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new MyPagerAdapter());
+        settingChange = new SharedPreferences.OnSharedPreferenceChangeListener() {
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                autoRefrsh = settings.getBoolean("autoRefresh", true);
+            }
+        };
     }
 
     @Override
@@ -60,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     public void onResume() {
-        refresh = false;
+        refresh = true;
         Log.i(MainActivity.class.getSimpleName() ,"Resume");
         super.onResume();
     }
@@ -80,6 +93,8 @@ public class MainActivity extends ActionBarActivity {
                 ssh.refresh(getApplicationContext());
                 break;
             case R.id.action_settings:
+                Intent settingsIntent = new Intent(this, SettingsActivity.class);
+                startActivity(settingsIntent);
                 break;
         }
 
@@ -154,6 +169,8 @@ public class MainActivity extends ActionBarActivity {
             if(position == 0) {
                 View servers = getLayoutInflater().inflate(R.layout.fragment_servers, container, false);
                 container.addView(servers);
+
+
                 apacheStatus = (TextView) findViewById(R.id.apacheStatus);
                 tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
                 vsftpdStatus = (TextView) findViewById(R.id.vsftpdStatus);
@@ -166,15 +183,18 @@ public class MainActivity extends ActionBarActivity {
                 openvpnSwitch = (Switch) findViewById(R.id.openvpnSwitch);
                 mysqlSwitch = (Switch) findViewById(R.id.mysqlSwitch);
 
+                settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+                timer = new Timer();
                 ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus,mysqlStatus, vsftpdStatus, openvpnStatus)),
                         new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, mysqlSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
 
+                autoRefrsh = settings.getBoolean("autoRefresh", true);
+
                 refresh = true;
-                timer = new Timer();
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (refresh && ssh != null) {
+                        if (refresh && ssh != null && autoRefrsh) {
                             ssh.refresh(getApplicationContext());
                         }
                     }
@@ -188,10 +208,6 @@ public class MainActivity extends ActionBarActivity {
                 updateOutput = (TextView) findViewById(R.id.updateOutput);
                 return settings;
             }
-        }
-
-        @Override
-        public void finishUpdate(ViewGroup container) {
         }
     }
 
