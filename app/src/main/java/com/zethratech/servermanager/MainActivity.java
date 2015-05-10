@@ -21,11 +21,12 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
+    private static final String TAG = MainActivity.class.getSimpleName();
+    int refreshTime = 5000;
 
-    int refreshTime = 20000;
-
-    boolean refresh = false;
-    boolean autoRefrsh = false;
+    boolean firstRun = true;
+    boolean refresh = true;
+    boolean autoRefresh = false;
 
     SSH ssh = null;
     Timer timer;
@@ -56,10 +57,12 @@ public class MainActivity extends ActionBarActivity {
         setContentView(R.layout.activity_main);
         viewPager = (ViewPager) findViewById(R.id.viewPager);
         viewPager.setAdapter(new MyPagerAdapter());
+        timer = new Timer();
+        settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
         settingChange = new SharedPreferences.OnSharedPreferenceChangeListener() {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-                autoRefrsh = settings.getBoolean("autoRefresh", true);
+                autoRefresh = settings.getBoolean("autoRefresh", true);
             }
         };
     }
@@ -97,7 +100,6 @@ public class MainActivity extends ActionBarActivity {
                 startActivity(settingsIntent);
                 break;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -129,11 +131,13 @@ public class MainActivity extends ActionBarActivity {
                     ssh.execute(getApplicationContext(), "service vsftpd start");
                 else
                     ssh.execute(getApplicationContext(), "service vsftpd stop");
+                break;
             case R.id.openvpnSwitch:
                 if(openvpnSwitch.isChecked())
                     ssh.execute(getApplicationContext(), "service openvpnas start");
                 else
                     ssh.execute(getApplicationContext(), "service openvpnas stop");
+                break;
             case R.id.getUpdates:
                 ssh.getUpdates(getApplicationContext(), updateOutput);
                 break;
@@ -170,7 +174,6 @@ public class MainActivity extends ActionBarActivity {
                 View servers = getLayoutInflater().inflate(R.layout.fragment_servers, container, false);
                 container.addView(servers);
 
-
                 apacheStatus = (TextView) findViewById(R.id.apacheStatus);
                 tomcatStatus = (TextView) findViewById(R.id.tomcatStatus);
                 vsftpdStatus = (TextView) findViewById(R.id.vsftpdStatus);
@@ -183,18 +186,17 @@ public class MainActivity extends ActionBarActivity {
                 openvpnSwitch = (Switch) findViewById(R.id.openvpnSwitch);
                 mysqlSwitch = (Switch) findViewById(R.id.mysqlSwitch);
 
-                settings = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-                timer = new Timer();
                 ssh = new SSH(new ArrayList<TextView>(Arrays.asList(apacheStatus, tomcatStatus,mysqlStatus, vsftpdStatus, openvpnStatus)),
                         new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, mysqlSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
 
-                autoRefrsh = settings.getBoolean("autoRefresh", true);
-
-                refresh = true;
+                autoRefresh = settings.getBoolean("autoRefresh", false);
+                if(!autoRefresh) {
+                    ssh.refresh(getApplicationContext());
+                }
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
-                        if (refresh && ssh != null && autoRefrsh) {
+                        if (refresh && ssh != null && autoRefresh) {
                             ssh.refresh(getApplicationContext());
                         }
                     }

@@ -3,6 +3,11 @@
     <CheckBoxPreference
         android:title="Auto Refresh"
         android:key="autoRefresh"
-        android:summary="Should Server Status Automatically Refresh"
+        android:summary="Should server status automatically refresh"
         android:defaultValue="true"/>
+    <com.zethratech.preference.TimePickerPreference
+        android:title="Refresh Time"
+        android:key="refreshTime"
+        android:summary="How often should server status automatically refresh"
+        android:defaultValue="20" />
 </PreferenceScreen>
