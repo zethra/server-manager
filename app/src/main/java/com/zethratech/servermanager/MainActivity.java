@@ -22,7 +22,7 @@ import java.util.TimerTask;
 
 public class MainActivity extends ActionBarActivity {
     private static final String TAG = MainActivity.class.getSimpleName();
-    int refreshTime = 5000;
+    private int refreshTime = 20000;
 
     boolean firstRun = true;
     boolean refresh = true;
@@ -63,6 +63,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
                 autoRefresh = settings.getBoolean("autoRefresh", true);
+                //refreshTime = settings.getInt("refreshTime", 20);
             }
         };
     }
@@ -190,19 +191,23 @@ public class MainActivity extends ActionBarActivity {
                         new ArrayList<Switch>(Arrays.asList(apacheSwitch, tomcatSwitch, mysqlSwitch, vsftpdSwitch, openvpnSwitch)) , getResources());
 
                 autoRefresh = settings.getBoolean("autoRefresh", false);
+                //refreshTime = settings.getInt("refreshTime", 20);
+
                 if(!autoRefresh) {
                     ssh.refresh(getApplicationContext());
                 }
+
                 timer.schedule(new TimerTask() {
                     @Override
                     public void run() {
                         if (refresh && ssh != null && autoRefresh) {
                             ssh.refresh(getApplicationContext());
-                        }
+                            Log.i(TAG, "Timer Yes");
+                        } else
+                            Log.i(TAG, "Timer No");
                     }
                 }, 0, refreshTime);
 
-                //CreateFromModel createFromModel = new CreateFromModel(Settings.class);
                 return servers;
             } else {
                 View settings = getLayoutInflater().inflate(R.layout.fragment_updates, container, false);

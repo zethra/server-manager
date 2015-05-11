@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.os.Build;
 import android.preference.DialogPreference;
+import android.text.Layout;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -18,13 +19,15 @@ import com.zethratech.servermanager.R;
 
 public class TimePickerPreference extends DialogPreference{
 
-    public static final int MAX_VALUE = Integer.MAX_VALUE;
+    public static final int MAX_VALUE = 60;
     public static final int MIN_VALUE = 0;
 
     private LinearLayout linearLayout;
     private NumberPicker minuetsPicker;
     private NumberPicker secondsPicker;
     private int value;
+    private int minVal;
+    private int secVal;
 
     public TimePickerPreference(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -32,28 +35,11 @@ public class TimePickerPreference extends DialogPreference{
 
     @Override
     protected View onCreateDialogView() {
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        layoutParams.gravity = Gravity.CENTER;
+        View layout = LayoutInflater.from(getContext()).inflate(R.layout.widget_time_picker, null);
 
-        LinearLayout.LayoutParams pickerParams = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-        pickerParams.setMargins(20, 0, 0, 0);
-
-        minuetsPicker = new NumberPicker(getContext());
-        minuetsPicker.setLayoutParams(layoutParams);
-        secondsPicker = new NumberPicker(getContext());
-        secondsPicker.setLayoutParams(layoutParams);
-
-        linearLayout = new LinearLayout(getContext());
-        linearLayout.setLayoutParams(layoutParams);
-        linearLayout.addView(minuetsPicker, pickerParams);
-        linearLayout.addView(secondsPicker);
-
-        FrameLayout dialogView = new FrameLayout(getContext());
-        dialogView.addView(linearLayout);
-
-        return dialogView;
+        minuetsPicker = (NumberPicker) layout.findViewById(R.id.minute);
+        secondsPicker = (NumberPicker) layout.findViewById(R.id.seconds);
+        return layout;
     }
 
     @Override
@@ -61,13 +47,23 @@ public class TimePickerPreference extends DialogPreference{
         super.onBindDialogView(view);
         minuetsPicker.setMinValue(MIN_VALUE);
         minuetsPicker.setMaxValue(MAX_VALUE);
-        minuetsPicker.setValue(getValue());
+        secondsPicker.setMinValue(MIN_VALUE);
+        secondsPicker.setMaxValue(MAX_VALUE);
+
+        int val = getValue();
+        secVal = val % 60;
+        minVal = (int)((val - secVal) / 60);
+
+        minuetsPicker.setValue(minVal);
+        secondsPicker.setValue(secVal);
     }
 
     @Override
     protected void onDialogClosed(boolean positiveResult) {
         if (positiveResult) {
-            setValue(minuetsPicker.getValue());
+            minVal = minuetsPicker.getValue();
+            secVal = secondsPicker.getValue();
+            setValue(minVal * 60 + secVal);
         }
     }
 
